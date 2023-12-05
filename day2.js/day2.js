@@ -19,47 +19,46 @@ const readData = () => {
 
 //part 1
 
-const convertData = (data) => {
-    const convertedData = data.flatMap((game, i) => {
-        const includesId = new Set();
-        const games = game.split(';');
-        const nestedArrayOfColoursAndFrequency = games.flatMap((line, j) => {
-            const matched = line.match(/(\d+)\s*(game|blue|red|green)/gi) || [];
+const meetsCondition = (frequency, colour) => {
+    return (frequency > 12 && colour === 'red') ||
+            (frequency > 13 && colour === 'green') ||
+            (frequency > 14 && colour === 'blue');
+}
 
-            return matched.map((match) => {
-                const [frequency, colour] = match.split(' ');
-                
+const processMatch = (match, gameId, includesId) => {
+    const [frequency, colour ] = match.split(' ');
 
-                if ((frequency > 12 && colour === 'red') || (frequency > 13 && colour === 'green') || (frequency > 14 && colour === 'blue')) {
-                        const currentId = i+1;
-                        if(!includesId.has(currentId)){
-                            includesId.add(currentId)                         
-                        }
-                   
-                }
-                console.log(includesId)
+    if(meetsCondition(frequency, colour)){
+        const currentId = gameId+1;
+        includesId.add(currentId)
+    }
+}
 
+const convertData = (data) => { 
 
+    const includesId = new Set();
+
+    const convertedData = data.flatMap((game, gameId) => {
+        const gameParts = game.split(';');
+
+        const coloursAndFrequency = gameParts.flatMap((line) => {
+            const matches = line.match(/(\d+)\s*(game|blue|red|green)/gi) || [];
+
+            matches.forEach((match) => {
+                processMatch(match, gameId, includesId);
             });
-         
-        });
-        if(!includesId.has(i)){
-            return{
-                id: i+1,
-              
-            }
-        }
-        console.log(includesId.has(4))
-        return nestedArrayOfColoursAndFrequency.filter(element => element)
-    });
-
-    return convertedData;
+        })
+        return coloursAndFrequency.filter(Boolean);
+    })
+    return includesId
 };
 
-const sumIds = (data) => {
-    console.log(data)
-    return data.reduce((a,b) => a + b.id, 0)
-}
+const sumIds = (data, set) => {
+    return Array.from({ length: data.length }, (_, i) => i + 1)
+        .filter((id) => !set.has(id))
+        .reduce((total, id) => total + id, 0);
+};
+
 
 
 
@@ -72,5 +71,5 @@ const sumIds = (data) => {
 const {dummyData, realData} = readData();
 
 console.log(convertData(dummyData))
-console.log(sumIds(convertData(dummyData)))
+console.log(sumIds(realData, convertData(realData)))
 //console.log(dummyData)
