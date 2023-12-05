@@ -62,14 +62,44 @@ const sumIds = (data, set) => {
 
 
 
+//part 2
+
+//What's the fewest number of cubes of each colour that could have been in the bag to make the game possible?
+
+//Power of a set of cubes = numbers of red, green and blue cubes multipled together.
+
+
+const convertDataToArrOfObjects = (data) => {
+    const includesId = new Set();
+
+    const convertedData = data.flatMap((game, gameId) => {
+        const gameParts = game.split(',:;');
     
+     
 
-
-
+        return gameParts.flatMap((line) => {
+            const matches = line.match(/(\d+)\s*(game|blue|red|green)/gi) || [];
+      
+            return {
+                gameId: gameId+1,
+                values: matches
+            }
+            // return {
+            //     gameId: gameId+1,
+            //     colour: colour,
+            //     frequency: frequency
+            // }
+        
+            
+        })
+  
+    })
+    return convertedData
+}
 
 
 const {dummyData, realData} = readData();
-
-console.log(convertData(dummyData))
-console.log(sumIds(realData, convertData(realData)))
+console.log(convertDataToArrOfObjects(dummyData))
+// console.log(convertData(dummyData))
+// console.log(sumIds(realData, convertData(realData)))
 //console.log(dummyData)
