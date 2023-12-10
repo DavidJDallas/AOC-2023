@@ -79,16 +79,24 @@ const convertDataToArrOfObjects = (data) => {
 
         return gameParts.flatMap((line) => {
             const matches = line.match(/(\d+)\s*(game|blue|red|green)/gi) || [];
-      
+            let dictionary = {}
+
+            for (let i = 0; i < matches.length; i++) {
+                const [freq, colour] = matches[i].split(' ');
+                console.log(freq, 'freq', colour, 'freqandcol');
+              
+                if (!dictionary.hasOwnProperty(colour) || parseInt(freq) > parseInt(dictionary[colour])) {
+                  dictionary[colour] = freq;
+                }
+              
+                console.log(dictionary);
+              }
+          console.log(dictionary)
             return {
                 gameId: gameId+1,
                 values: matches
             }
-            // return {
-            //     gameId: gameId+1,
-            //     colour: colour,
-            //     frequency: frequency
-            // }
+        
         
             
         })
