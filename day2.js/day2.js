@@ -77,9 +77,10 @@ const convertDataToArrOfObjects = (data) => {
     
      
 
-        return gameParts.flatMap((line) => {
+        return gameParts.flatMap((line, j) => {
             const matches = line.match(/(\d+)\s*(game|blue|red|green)/gi) || [];
             let dictionary = {}
+            
 
             for (let i = 0; i < matches.length; i++) {
                 const [freq, colour] = matches[i].split(' ');
@@ -89,12 +90,13 @@ const convertDataToArrOfObjects = (data) => {
                   dictionary[colour] = freq;
                 }
               
-                console.log(dictionary);
               }
-          console.log(dictionary)
+            const powers = Object.values(dictionary).reduce((acc, freq) => acc * parseInt(freq), 1);
             return {
                 gameId: gameId+1,
-                values: matches
+                values: matches,
+                colourFrequency: dictionary,
+                powers
             }
         
         
@@ -102,12 +104,12 @@ const convertDataToArrOfObjects = (data) => {
         })
   
     })
-    return convertedData
+    return convertedData.reduce((acc, obj) => acc + obj.powers, 0);
 }
 
 
 const {dummyData, realData} = readData();
-console.log(convertDataToArrOfObjects(dummyData))
+console.log(convertDataToArrOfObjects(realData))
 // console.log(convertData(dummyData))
 // console.log(sumIds(realData, convertData(realData)))
 //console.log(dummyData)
